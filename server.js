@@ -63,6 +63,7 @@ app.get('/categories/:id',async(req,res,next) => {
     }
 })
 app.get('/movies/6', async(req,res,next) => {
+    try{
     res.send(`
     <html>
     <body>
@@ -70,22 +71,25 @@ app.get('/movies/6', async(req,res,next) => {
     </body>
     </html>
     `)
+    } catch(ex){
+        next(ex);
+    }
 
 })
 app.get('/movies/:id',async(req,res,next) => {
     try{
         const response = await client.query('SELECT * FROM "Descriptions" WHERE id=$1',[req.params.id]);
         const descript = response.rows[0];
-    
+        //res.send(descript)
         res.send(`
         <html>
             <head>
                 <link rel='stylesheet' href='/styles/styles.css' />
             </head>
             <body id = 'details-page'>
-                <h1><a href = '/categories/${Object.values(descript)[3]}' >Description</a></h1>
+                <h1><a href = '/categories/${descript.movies_id}' >Description</a></h1>
                 <div>RATING: ${descript.rating}</div>
-                <p>${descript.bio = faker.lorem.paragraph(2)}</p>
+                <p>${descript.bio = faker.lorem.paragraphs(3)}</p>
             </body>
         </html>
         `)
